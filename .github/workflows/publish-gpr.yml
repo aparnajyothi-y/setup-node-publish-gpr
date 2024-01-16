@@ -1,0 +1,51 @@
+
+name: NPM Package
+
+on:
+  workflow_dispatch :
+
+jobs:
+
+  test-setup-gpr-v4:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+     
+    steps:
+       - uses: actions/checkout@v4
+       - uses: actions/setup-node@v4
+         with:
+           node-version: '14.x'
+           registry-url: 'https://registry.npmjs.org'
+       - run: npm ci
+       - run: npm publish
+         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+            registry-url: 'https://npm.pkg.github.com'
+       - run: npm publish
+         env:
+           NODE_AUTH_TOKEN: ${{ secrets.GITHU_TOKEN }}
+
+  test-setup-gpr-v3:
+        runs-on: macos-latest
+        strategy:
+          fail-fast: false
+
+        steps:
+         - uses: actions/checkout@v3
+         - uses: actions/setup-node@v3
+           with:
+            node-version: '14.x'
+            registry-url: 'https://registry.npmjs.org'
+         - run: npm ci
+         - run: npm publish
+           env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+         - uses: actions/setup-node@v4
+           with:
+            registry-url: 'https://npm.pkg.github.com'
+         - run: npm publish
+           env:
+             NODE_AUTH_TOKEN: ${{ secrets.GITHU_TOKEN }}
